@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JAR Family Meals</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="JAR Family Meals">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #2E2A5B 0%, #4A7C59 25%, #7FB3D3 50%, #B5A7D8 75%, #F4C2C2 100%);
+            min-height: 100vh;
+            padding: 10px;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #F4C2C2 0%, #B5A7D8 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        
+        .content {
+            padding: 20px;
+        }
+        
+        .recipe-list {
+            display: block;
+        }
+        
+        .recipe-item {
+            background: linear-gradient(135deg, #7FB3D3 0%, #4A7C59 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 15px 20px;
+            margin-bottom: 12px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .recipe-item:hover, .recipe-item:active {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .recipe-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .recipe-view, .shopping-list-view {
+            display: none;
+        }
+        
+        .back-btn {
+            background: linear-gradient(135deg, #B5A7D8 0%, #F4C2C2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: transform 0.2s;
+        }
+        
+        .back-btn:hover {
+            transform: translateY(-1px);
+        }
+        
+        .recipe-content {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .recipe-content h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .recipe-content p {
+            color: #34495e;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        
+        .recipe-content ul, .recipe-content ol {
+            margin-left: 20px;
+            color: #34495e;
+            line-height: 1.6;
+        }
+        
+        .recipe-content li {
+            margin-bottom: 8px;
+        }
+        
+        .scale-section {
+            background: linear-gradient(135deg, #4A7C59 0%, #7FB3D3 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .scale-section h3 {
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .scale-options {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .scale-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 10px;
+            padding: 10px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 50px;
+        }
+        
+        .scale-btn.active {
+            background: rgba(255, 255, 255, 0.9);
+            color: #4A7C59;
+            border-color: white;
+        }
+        
+        .generate-btn {
+            background: linear-gradient(135deg, #F4C2C2 0%, #B5A7D8 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: transform 0.2s;
+        }
+        
+        .generate-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .shopping-section {
+            margin-bottom: 25px;
+        }
+        
+        .shopping-section h3 {
+            color: #2E2A5B;
+            margin-bottom: 15px;
+            font-size: 18px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #7FB3D3;
+        }
+        
+        .shopping-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .shopping-item:last-child {
+            border-bottom: none;
+        }
+        
+        .shopping-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 15px;
+            cursor: pointer;
+        }
+        
+        .shopping-item label {
+            font-size: 16px;
+            cursor: pointer;
+            flex-grow: 1;
+            color: #34495e;
+            line-height: 1.4;
+        }
+        
+        .shopping-item.checked label {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+        
+        .additions-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .additions-section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .addition-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            transition: border-color 0.2s;
+        }
+        
+        .addition-input:focus {
+            outline: none;
+            border-color: #7FB3D3;
+        }
+        
+        .clear-all-btn {
+            background: linear-gradient(135deg, #F4C2C2 0%, #B5A7D8 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: transform 0.2s;
+        }
+        
+        .clear-all-btn:hover {
+            transform: translateY(-1px);
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>JAR Family Meals</h1>
+            <p>Delicious recipes for the whole family</p>
+        </div>
+        
+        <div class="content">
+            <!-- Recipe List View -->
+            <div class="recipe-list" id="recipeList">
+                <div class="recipe-item">
+                    <span>Crockpot Beef Short Ribs</span>
+                    <div class="recipe-actions">
+                        <button class="btn" onclick="viewRecipe(0)">View</button>
+                        <button class="btn" onclick="showScaling(0)">Shop</button>
+                    </div>
+                </div>
+                <div class="recipe-item">
+                    <span>Instant Pot Shrimp Penne</span>
+                    <div class="recipe-actions">
+                        <button class="btn" onclick="viewRecipe(1)">View</button>
+                        <button class="btn" onclick="showScaling(1)">Shop</button>
+                    </div>
+                </div>
+                <div class="recipe-item">
+                    <span>Sheet Pan Mini Sliders</span>
+                    <div class="recipe-actions">
+                        <button class="btn" onclick="viewRecipe(2)">View</button>
+                        <button class="btn" onclick="showScaling(2)">Shop</button>
+                    </div>
+                </div>
+                <div class="recipe-item">
+                    <span>Sheet Pan Honey Garlic Salmon</span>
+                    <div class="recipe-actions">
+                        <button class="btn" onclick="viewRecipe(3)">View</button>
+                        <button class="btn" onclick="showScaling(3)">Shop</button>
+                    </div>
+                </div>
+                <div class="recipe-item">
+                    <span>Green Chicken Chili Enchiladas</span>
+                    <div class="recipe-actions">
+                        <button class="btn" onclick="viewRecipe(4)">View</button>
+                        <button class="btn" onclick="showScaling(4)">Shop</button>
+                    </div>
+                </div>
+                <div class="recipe-item">
+                    <span>Taco Baked Potatoes</span>
+                    <div class="recipe-actions">
+                        <button class="btn" onclick="viewRecipe(5)">View</button>
+                        <button class="btn" onclick="showScaling(5)">Shop</button>
+                    </div>
+                </div>
+                <div class="recipe-item">
+                    <span>Frito Pie Casserole</span>
+                    <div class="recipe-actions">
+                        <button class="btn" onclick="viewRecipe(6)">View</button>
+                        <button class="btn" onclick="showScaling(6)">Shop</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recipe View -->
+            <div class="recipe-view" id="recipeView">
+                <button class="back-btn" onclick="showRecipeList()">← Back to Recipes</button>
+                <div class="recipe-content" id="recipeContent"></div>
+            </div>
+            
+            <!-- Scaling View -->
+            <div class="recipe-view" id="scalingView">
+                <button class="back-btn" onclick="showRecipeList()">← Back to Recipes</button>
+                <div class="scale-section">
+                    <h3>How many people?</h3>
+                    <div class="scale-options">
+                        <button class="scale-btn" onclick="selectScale(4)">4</button>
+                        <button class="scale-btn active" onclick="selectScale(6)">6</button>
+                        <button class="scale-btn" onclick="selectScale(8)">8</button>
+                        <button class="scale-btn" onclick="selectScale(10)">10</button>
+                        <button class="scale-btn" onclick="selectScale(12)">12</button>
+                    </div>
+                    <button class="generate-btn" onclick="generateShoppingList()">Generate Shopping List</button>
+                </div>
+            </div>
+            
+            <!-- Shopping List View -->
+            <div class="shopping-list-view" id="shoppingListView">
+                <button class="back-btn" onclick="showRecipeList()">← Back to Recipes</button>
+                <div id="shoppingContent"></div>
+                <div class="additions-section">
+                    <h3>Additional Items</h3>
+                    <input type="text" class="addition-input" placeholder="Add item...">
+                    <input type="text" class="addition-input" placeholder="Add item...">
+                    <input type="text" class="addition-input" placeholder="Add item...">
+                    <input type="text" class="addition-input" placeholder="Add item...">
+                    <input type="text" class="addition-input" placeholder="Add item...">
+                    <input type="text" class="addition-input" placeholder="Add item...">
+                    <input type="text" class="addition-input" placeholder="Add item...">
+                    <input type="text" class="addition-input" placeholder="Add item...">
+                </div>
+                <button class="clear-all-btn" onclick="clearAllItems()">Clear All Items</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentRecipe = 0;
+        let currentScale = 6;
+        
+        const recipes = [
+            {
+                name: "Crockpot Beef Short Ribs",
+                servings: 6,
+                ingredients: {
+                    meat: ["3-4 lbs chuck short ribs, cut into individual ribs"],
+                    produce: ["1 large onion, sliced", "3 cloves garlic, minced", "Salad ingredients"],
+                    canned: ["2 tbsp tomato paste", "¼ cup red wine or beef broth", "2 cups beef broth", "2 tbsp Worcestershire sauce"],
+                    dairy: [],
+                    other: ["2 tbsp olive oil", "2 tbsp brown sugar", "1 tsp dried thyme", "2 bay leaves", "3 tbsp cornstarch + 3 tbsp cold water", "Salt and pepper to taste", "Mashed potatoes", "Steamed or roasted broccoli"]
+                },
+                instructions: "Season ribs with salt and pepper. Heat oil in large skillet, brown ribs on all sides, 8-10 minutes total. Place onions in crockpot, add browned ribs on top. In same skillet, sauté garlic and tomato paste for 1 minute. Add wine/broth to deglaze. Add beef broth, Worcestershire, brown sugar, thyme, and bay leaves. Pour over ribs. Cook on LOW 8 hours until fall-off-the-bone tender. Remove ribs, strain liquid into saucepan. Mix cornstarch and water, stir into liquid. Simmer 5 minutes until thickened. Serve ribs with gravy over mashed potatoes and broccoli. Serve with salad of choice."
+            },
+            {
+                name: "Instant Pot Shrimp Penne",
+                servings: 6,
+                ingredients: {
+                    meat: ["1½ lbs large shrimp, peeled and deveined"],
+                    produce: ["4 cloves garlic, minced", "Fresh parsley for garnish", "2 large zucchini, sliced", "2 large onions, sliced", "Salad ingredients"],
+                    canned: ["3 cups chicken broth"],
+                    dairy: ["½ cup heavy cream", "¾ cup grated Parmesan cheese", "2 tbsp butter"],
+                    other: ["1 lb penne pasta", "3 tbsp lemon juice", "1 tsp Italian seasoning", "Salt and pepper to taste", "3 tbsp olive oil"]
+                },
+                instructions: "Start vegetables: Preheat oven to 425°F. Toss zucchini and onions with oil, salt, and pepper. Roast 20-25 minutes. Add pasta, chicken broth, garlic, and Italian seasoning to Instant Pot. Pressure cook HIGH 6 minutes, quick release. Switch to sauté mode, add shrimp, cook 2-3 minutes until pink. Stir in cream, Parmesan, lemon juice, and butter. Season with salt and pepper. Garnish with parsley, serve alongside roasted vegetables. Serve with salad of choice."
+            },
+            {
+                name: "Sheet Pan Mini Sliders",
+                servings: 6,
+                ingredients: {
+                    meat: ["2 lbs ground beef (80/20)"],
+                    produce: ["2 large onions, sliced thick", "2 cloves garlic, minced", "Salad ingredients"],
+                    canned: [],
+                    dairy: ["8 oz blue cheese, crumbled"],
+                    other: ["18 slider buns or butter lettuce cups", "3 large sweet potatoes, cut into fry shapes", "4 tbsp olive oil", "1 tsp garlic powder", "1 tsp paprika", "Salt and pepper", "Fresh thyme sprigs (optional)", "Cracked black pepper"]
+                },
+                instructions: "Preheat oven to 425°F. Line two sheet pans with parchment. Toss sweet potato fries with 2 tbsp oil, paprika, salt, and pepper. Spread on one pan. Toss onion slices with 1 tbsp oil, salt, and pepper. Add to sweet potato pan. For roasted blue cheese: Place blue cheese in small baking dish, drizzle with olive oil, sprinkle with garlic, thyme, and pepper. Form beef into 18 small patties, season with garlic powder, salt, and pepper. Heat 1 tbsp oil in large oven-safe skillet or use second sheet pan for burgers. Put sweet potatoes, onions, and blue cheese in oven. Bake 20-25 minutes (blue cheese 8-12 minutes until softened and golden). Cook burgers 3-4 minutes per side. Serve sliders with sweet potato fries, onions, and warm roasted blue cheese. Serve with salad of choice."
+            },
+            {
+                name: "Sheet Pan Honey Garlic Salmon",
+                servings: 6,
+                ingredients: {
+                    meat: ["6 salmon fillets (6 oz each)"],
+                    produce: ["1½ lbs asparagus, trimmed", "3 cloves garlic, minced", "1 lemon, sliced", "Salad ingredients"],
+                    canned: ["¼ cup soy sauce"],
+                    dairy: [],
+                    other: ["1 lb baby potatoes, halved and pre-cooked 10 minutes", "⅓ cup honey", "2 tbsp olive oil", "Salt and pepper to taste"]
+                },
+                instructions: "Preheat oven to 400°F. Line sheet pan with parchment paper. Whisk together honey, soy sauce, and garlic for glaze. Arrange pre-cooked potatoes and asparagus on sheet pan, drizzle with olive oil. Season salmon with salt and pepper, place on sheet pan. Brush salmon with honey garlic glaze, top with lemon slices. Bake 12-15 minutes until salmon flakes easily and vegetables are tender. Serve with salad of choice."
+            },
+            {
+                name: "Green Chicken Chili Enchiladas",
+                servings: 6,
+                ingredients: {
+                    meat: ["1 lb shredded chicken"],
+                    produce: ["Salad ingredients"],
+                    canned: ["1 (10oz) can condensed cream of chicken soup", "1 (4oz) can diced green chilies", "1 (15 oz) can Verde (green) enchilada sauce"],
+                    dairy: ["8 oz sour cream", "3.5 cups Mexican shredded cheese (preferably Kraft)"],
+                    other: ["20 corn tortillas", "Vegetable cooking spray", "1 cup pico de gallo (optional)", "Black beans", "Spanish rice"]
+                },
+                instructions: "Preheat oven to 350°F. Lower the racks so the dish will be in the center. In a large bowl, combine cream of chicken soup, verde enchilada sauce, and sour cream. Whisk well until fully blended. Spray a large baking dish (9x13) with cooking spray to prevent sticking. In a large bowl, add shredded chicken. Drain green chilies and add to chicken. Blend well and set aside. Separate 2 cups of shredded cheese. Set the rest aside. On a work surface, lay a tortilla flat. Sprinkle a small amount of cheese lengthwise. Then add the chicken mixture. Carefully roll the seam side down. The cheese will help hold the enchilada together as it cooks. Continue with all tortillas until finished. If using a smaller dish, you can add a second row on top. Pour the cream enchilada sauce mixture all over the enchiladas. Top with the remainder of the cheese. Bake for 30 minutes until bubbly and thoroughly cooked. Serve with black beans and Spanish rice. Garnish with pico de gallo, if you wish. Serve with salad of choice."
+            },
+            {
+                name: "Taco Baked Potatoes",
+                servings: 6,
+                ingredients: {
+                    meat: ["1.5 lbs ground beef"],
+                    produce: ["1 large onion, diced", "Salad ingredients"],
+                    canned: ["1 packet taco seasoning"],
+                    dairy: ["2 cups shredded cheddar cheese", "Sour cream"],
+                    other: ["6 large russet potatoes", "Guacamole", "Butter"]
+                },
+                instructions: "Preheat oven to 425°F. Pierce potatoes with fork and bake 45-60 minutes until tender. While potatoes bake, brown ground beef with diced onion in large skillet, 8-10 minutes. Drain fat, add taco seasoning and water according to packet directions. Simmer 5 minutes. Cut open baked potatoes, fluff with fork, add butter. Top each potato with taco meat, cheddar cheese, sour cream, and guacamole. Serve with salad of choice."
+            },
+            {
+                name: "Frito Pie Casserole",
+                servings: 6,
+                ingredients: {
+                    meat: ["1.5 lbs ground beef", "1 package hot dogs, cut up"],
+                    produce: ["1 large onion, diced", "Salad ingredients"],
+                    canned: ["1 can pinto beans, drained and rinsed", "1 cup corn (frozen or canned)"],
+                    dairy: ["2 cups shredded cheddar cheese", "Sour cream"],
+                    other: ["1 large bag Fritos corn chips", "Banana peppers (on the side)"]
+                },
+                instructions: "Preheat oven to 375°F. Grease a large casserole dish (9x13). Brown ground beef and diced onion in large skillet, 8-10 minutes. Drain fat. Add cut-up hot dogs to beef mixture, cook 3-4 minutes until heated through. Stir in pinto beans and corn, cook 2-3 minutes until warmed. Layer half the Fritos in bottom of casserole dish. Spread beef and hot dog mixture over Fritos. Top with remaining Fritos, then sprinkle cheddar cheese over top. Bake 15-20 minutes until cheese is melted and bubbly. Serve with sour cream and banana peppers on the side. Serve with salad of choice."
+            }
+        ];
+        
+        function showRecipeList() {
+            document.getElementById('recipeList').style.display = 'block';
+            document.getElementById('recipeView').style.display = 'none';
+            document.getElementById('scalingView').style.display = 'none';
+            document.getElementById('shoppingListView').style.display = 'none';
+        }
+        
+        function viewRecipe(index) {
+            currentRecipe = index;
+            const recipe = recipes[index];
+            
+            let content = `
+                <h3>${recipe.name}</h3>
+                <p><strong>Serves:</strong> ${recipe.servings} people</p>
+                <p><strong>Instructions:</strong></p>
+                <p>${recipe.instructions}</p>
+            `;
+            
+            document.getElementById('recipeContent').innerHTML = content;
+            document.getElementById('recipeList').style.display = 'none';
+            document.getElementById('recipeView').style.display = 'block';
+        }
+        
+        function showScaling(index) {
+            currentRecipe = index;
+            document.getElementById('recipeList').style.display = 'none';
+            document.getElementById('scalingView').style.display = 'block';
+            
+            // Reset scale buttons
+            document.querySelectorAll('.scale-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.scale-btn[onclick="selectScale(6)"]').classList.add('active');
+            currentScale = 6;
+        }
+        
+        function selectScale(scale) {
+            currentScale = scale;
+            document.querySelectorAll('.scale-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+        
+        function scaleAmount(amount, originalServings, newServings) {
+            if (typeof amount === 'string') {
+                // Extract number from string like "2 lbs" or "1 cup"
+                const match = amount.match(/^(\d+(?:\.\d+)?)/);
+                if (match) {
+                    const num = parseFloat(match[1]);
+                    const scaled = (num * newServings) / originalServings;
+                    
+                    // Round to practical measurements
+                    let rounded;
+                    if (scaled < 1) {
+                        rounded = Math.round(scaled * 4) / 4; // Round to nearest 1/4
+                    } else if (scaled < 10) {
+                        rounded = Math.round(scaled * 2) / 2; // Round to nearest 1/2
+                    } else {
+                        rounded = Math.round(scaled);
+                    }
+                    
+                    return amount.replace(match[1], rounded.toString());
+                }
+            }
+            return amount;
+        }
+        
+        function generateShoppingList() {
+            const recipe = recipes[currentRecipe];
+            const scaleFactor = currentScale / recipe.servings;
+            
+            let content = `<h2>${recipe.name} - ${currentScale} people</h2>`;
+            
+            // Create shopping list by category
+            const categories = [
+                { name: 'Meat', items: recipe.ingredients.meat },
+                { name: 'Produce', items: recipe.ingredients.produce },
+                { name: 'Canned/Packaged', items: recipe.ingredients.canned },
+                { name: 'Dairy', items: recipe.ingredients.dairy },
+                { name: 'Other', items: recipe.ingredients.other }
+            ];
+            
+            categories.forEach(category => {
+                if (category.items.length > 0) {
+                    content += `<div class="shopping-section">
+                        <h3>${category.name}</h3>`;
+                    
+                    category.items.forEach((item, index) => {
+                        const scaledItem = scaleAmount(item, recipe.servings, currentScale);
+                        const itemId = `item-${category.name}-${index}`;
+                        content += `
+                            <div class="shopping-item">
+                                <input type="checkbox" id="${itemId}" onchange="toggleItem(this)">
+                                <label for="${itemId}">${scaledItem}</label>
+                            </div>`;
+                    });
+                    
+                    content += '</div>';
+                }
+            });
+            
+            document.getElementById('shoppingContent').innerHTML = content;
+            document.getElementById('scalingView').style.display = 'none';
+            document.getElementById('shoppingListView').style.display = 'block';
+        }
+        
+        function toggleItem(checkbox) {
+            const item = checkbox.closest('.shopping-item');
+            if (checkbox.checked) {
+                item.classList.add('checked');
+            } else {
+                item.classList.remove('checked');
+            }
+        }
+        
+        function clearAllItems() {
+            // Clear all checkboxes
+            document.querySelectorAll('#shoppingContent input[type="checkbox"]').forEach(cb => {
+                cb.checked = false;
+                cb.closest('.shopping-item').classList.remove('checked');
+            });
+            
+            // Clear all addition inputs
+            document.querySelectorAll('.addition-input').forEach(input => {
+                input.value = '';
+            });
+        }
+        
+        // Initialize app
+        showRecipeList();
+    </script>
+</body>
+</html>
